@@ -4,6 +4,9 @@ This is a real-time chat application built using Node.js, MongoDB, Docker, and m
 
 ## Project Structure
 
+- `flask_app.py`: Flask app which is hosted on https://owen.pythonanywhere.com for POST requests
+- `pages/api`: routings for migrating to Next.js
+- `tests`: unit tests for all the Express endpoints
 - `controllers/`: Contains all the controller functions
 - `db/`: Contains database initialization scripts
 - `models/`: Contains all the data models
