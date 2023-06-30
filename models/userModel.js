@@ -1,21 +1,31 @@
-const mongoose = require('mongoose');
+import mongoose, { model } from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+const { Schema } = mongoose;
+
+const userSchema = new Schema({
   email: {
     type: String,
-    required: [true, 'A user must have an email'],
+    required: true,
     unique: true,
-    lowercase: true,
-
   },
   password: {
     type: String,
-    minlength: [6, 'A password must be at least 6 characters long'],
-    required: [true, 'A user must have a password'],
-    select: false,
+    required: true,
   },
+  // to be added later
+  chatrooms: {
+    type: Schema.Types.ObjectId,
+  },
+  messages: {
+    type: Schema.Types.ObjectId,
+  },
+  tasks: [
+    {
+      type: Schema.Types.ObjectId,
+    },
+  ],
 });
 
-const User = mongoose.model('User', userSchema);
+const User = model('User', userSchema);
 
-module.exports = User;
+export default User;
