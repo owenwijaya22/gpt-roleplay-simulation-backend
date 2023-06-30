@@ -1,23 +1,25 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const roomSchema = new mongoose.Schema({
+const roomSchema = new Schema({
   user: {
     type: String,
     ref: 'User',
-    required: true
+    required: true,
   },
   prompt: {
     type: String,
-    required: true
+    required: true,
   },
-  members: [{
-    // will be mongoose.Schema.Types.ObjectId
-    // keep track of which users are in which room
-    type: String,
-    required: true
-  }]
+  members: [
+    {
+      // will be mongoose.Schema.Types.ObjectId
+      // keep track of which users are in which room
+      type: String,
+      required: true,
+    },
+  ],
 });
 
-const Rooms = mongoose.model('Room', roomSchema);
+const Rooms = model('Room', roomSchema);
 
-module.exports = Rooms;
+export default Rooms;
