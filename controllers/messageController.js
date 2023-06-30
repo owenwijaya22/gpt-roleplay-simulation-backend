@@ -1,6 +1,6 @@
-const Message = require('../models/messageModel');
+import Message from '../models/messageModel.js';
 
-exports.getAllMessage = async (req, res) => {
+export async function getAllMessage(req, res) {
   try {
     const messages = await Message.find({ roomId: req.params.roomId });
     res.status(200).json({
@@ -15,11 +15,11 @@ exports.getAllMessage = async (req, res) => {
       message: err,
     });
   }
-};
+}
 
-exports.addMessage = async (req, res) => {
+export async function addMessage(req, res) {
   try {
-    const {to, from, message, roomId} = req.body;
+    const { to, from, message, roomId } = req.body;
     // Since Message.create() also saves the document, no need to call data.save()
     const data = await Message.create({
       to: to,
@@ -37,19 +37,18 @@ exports.addMessage = async (req, res) => {
         status: 'success',
         data: {
           message: 'Chat Added Successfully',
-          data
+          data,
         },
       });
-    } else {
-      return res.status(400).json({
-        status: 'failed',
-        message: 'Chat was not added into the database',
-      });
     }
+    return res.status(400).json({
+      status: 'failed',
+      message: 'Chat was not added into the database',
+    });
   } catch (err) {
     return res.status(404).json({
       status: 'failed',
-      message: 'Failed to retrieve messages: ' + err.message,
+      message: `Failed to retrieve messages: ${err.message}`,
     });
   }
-};
+}
