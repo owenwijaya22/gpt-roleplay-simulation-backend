@@ -1,18 +1,21 @@
-const dotenv = require('dotenv');
-const mongoose = require('mongoose');
+import { config } from 'dotenv';
+import { connect } from 'mongoose';
 
-dotenv.config({ path: './config.env' });
+import app from './app.js';
 
-mongoose
-  .connect('mongodb://db:27017/chats?authSource=admin', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    console.log('Connected to MongoDB!!');
-  });
+config({ path: './.env' });
 
-const app = require('./app');
+const dbUri = process.env.MONGODB_URI.replace(
+  '<password>',
+  process.env.MONGODB_PASSWORD
+);
+
+connect(dbUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log('Connected to MongoDB!!');
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
