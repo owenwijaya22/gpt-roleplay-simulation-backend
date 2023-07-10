@@ -1,5 +1,6 @@
 import express from 'express';
 import morgan from 'morgan';
+import expressJSDocSwagger from 'express-jsdoc-swagger';
 
 import messageRouter from './routes/messageRoutes.js';
 import roomRouter from './routes/roomRoutes.js';
@@ -10,7 +11,25 @@ import questionRouter from './routes/questionRoutes.js';
 import taskRouter from './routes/taskRoutes.js';
 import attemptRouter from './routes/attemptRoutes.js';
 
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const app = express();
+const options = {
+  info: {
+    version: '1.0.0',
+    title: 'Your App Name',
+    description: 'Your App Description',
+    license: {
+      name: 'MIT',
+    },
+  },
+  filesPattern: './**/*.js',
+  baseDir: __dirname,
+};
+expressJSDocSwagger(app)(options);
 
 if (process.env.NODE_ENV === 'development') {
   console.log('Morgan Initialized');
@@ -27,7 +46,7 @@ app.use((req, res, next) => {
 app.use('/api/message', messageRouter);
 app.use('/api/rooms', roomRouter);
 app.use('/api/users', userRouter);
-app.use('/api/company', companyRouter);
+app.use('/api/companies', companyRouter);
 app.use('/api/ai-user', aiRouter);
 app.use('/api/questions', questionRouter);
 app.use('/api/tasks', taskRouter);
