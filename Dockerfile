@@ -1,23 +1,25 @@
-# Select the base image
-FROM node
+FROM node:18-alpine
 
-# Create app directory
-WORKDIR /usr/src/app
+ENV NODE_ENV=development
+ENV PORT=80
+ENV MONGODB_URI=mongodb+srv://simulation:careerhackers@cluster0.lpznqjr.mongodb.net/?retryWrites=true&w=majority
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json ./
+WORKDIR /app
 
-# If you are building your code for production
-# RUN npm ci --only=production
-# For development, you can use npm install
+COPY package.json .
+
 RUN npm install
 
-# Bundle app source inside Docker image
 COPY . .
 
-# Your app binds to port 8080 so you'll use the EXPOSE instruction to have it mapped by the docker daemon
-EXPOSE 3000
+EXPOSE 80
 
-# Define the command to run your app using CMD which defines your runtime
-CMD [ "npm", "run", "start" ]
+CMD [ "npm", "start" ]
+
+# FROM public.ecr.aws/lambda/nodejs:16
+
+# # Copy function code
+# COPY . ${LAMBDA_TASK_ROOT}
+  
+# # Set the CMD to your handler (could also be done as a parameter override outside of the Dockerfile)
+# CMD [ "index.handler" ]
