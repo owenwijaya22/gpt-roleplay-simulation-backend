@@ -6,18 +6,13 @@ export async function getAllAttempts(req, res) {
   try {
     const attempts = await Attempt.find();
     if (!attempts) {
-      return res
-        .status(404)
-        .json({ status: 'error', message: 'No attempts found' });
+      return res.status(404).json({ message: 'No attempts found' });
     }
     return res.status(200).json({
-      status: 'success',
-      data: {
-        attempts,
-      },
+      attempts,
     });
   } catch (error) {
-    return res.status(500).json({ status: 'error', message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -26,60 +21,24 @@ export async function getAttemptById(req, res) {
     const { id } = req.params;
     const attempt = await Attempt.findById(id);
     if (!attempt) {
-      return res
-        .status(404)
-        .json({ status: 'error', message: 'No attempt found with that ID' });
+      return res.status(404).json({ message: 'No attempt found with that ID' });
     }
     return res.status(200).json({
-      status: 'success',
-      data: {
-        attempt,
-      },
+      attempt,
     });
   } catch (error) {
-    return res.status(500).json({ status: 'error', message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
 export async function createAttempt(req, res) {
   try {
-    if (!req.body.userId || !req.body.companyId) {
-      return res
-        .status(400)
-        .json({ status: 'error', message: 'Missing Fields' });
-    }
     const { userId, companyId } = req.body;
-
-    // retrieve all tasks for the company
-    const tasks = await Task.find({
-      company: new mongoose.Types.ObjectId(companyId),
-    });
-    if (!tasks || tasks.length === 0) {
-      return res
-        .status(404)
-        .json({ status: 'error', message: 'No tasks found for this company' });
-    }
-
-    // create a new attempt
     const startTime = new Date();
-    const endTime = new Date(startTime.getTime() + 30 * 60000);
-    const newAttempt = new Attempt({ userId, companyId, startTime, endTime });
-    tasks.forEach((task) => {
-      newAttempt.tasks.push({ taskId: task._id, complete: false });
-    });
-
-    await newAttempt.save();
-
-    // Create the response to send the attempt data to frontend
-    return res.status(201).json({
-      status: 'success',
-      data: {
-        attempt: newAttempt,
-        tasks,
-      },
-    });
+    const endTime = new Date(startTime.getTime() + 60 * 60000);
+    const duration = endTime.getMinutes() - startTime.getMinutes();
   } catch (error) {
-    return res.status(500).json({ status: 'error', message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -88,9 +47,7 @@ export async function completeTask(req, res) {
     const { id, taskId } = req.params;
     const attempt = await Attempt.findById(id);
     if (!attempt) {
-      return res
-        .status(404)
-        .json({ status: 'error', message: 'No attempt found with that ID' });
+      return res.status(404).json({ message: 'No attempt found with that ID' });
     }
 
     const task = attempt.taskIds.find(
@@ -98,7 +55,6 @@ export async function completeTask(req, res) {
     );
     if (!task) {
       return res.status(404).json({
-        status: 'error',
         message: 'No task found with that ID in the attempt',
       });
     }
@@ -107,13 +63,10 @@ export async function completeTask(req, res) {
     await attempt.save();
 
     return res.status(200).json({
-      status: 'success',
-      data: {
-        attempt,
-      },
+      attempt,
     });
   } catch (error) {
-    return res.status(500).json({ status: 'error', message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -122,16 +75,13 @@ export async function deleteAttempt(req, res) {
     const { id } = req.params;
     const attempt = await Attempt.findByIdAndDelete(id);
     if (!attempt) {
-      return res
-        .status(404)
-        .json({ status: 'error', message: 'No attempt found with that ID' });
+      return res.status(404).json({ message: 'No attempt found with that ID' });
     }
     return res.status(200).json({
-      status: 'success',
       message: 'Attempt successfully deleted',
     });
   } catch (error) {
-    return res.status(500).json({ status: 'error', message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
 
@@ -140,9 +90,7 @@ export async function updateAttempt(req, res) {
     const task = await Task.findById(req.params.id);
 
     if (!task) {
-      return res
-        .status(404)
-        .json({ status: 'error', message: 'Task not found.' });
+      return res.status(404).json({ message: 'Task not found.' });
     }
 
     const sessionDuration = Date.now() - task.startTime;
@@ -152,12 +100,9 @@ export async function updateAttempt(req, res) {
     await task.save();
 
     return res.status(200).json({
-      status: 'success',
-      data: {
-        task: task,
-      },
+      task: task,
     });
   } catch (error) {
-    return res.status(500).json({ status: 'error', message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 }
